@@ -1,16 +1,30 @@
-import { QueryClient } from "@tanstack/react-query";
-import { createRouter } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
+import { createRouter, createRootRoute, createRoute } from "@tanstack/react-router";
+import Index from "./routes/index";
+import AgendamentoPage from "./routes/agendamento";
 
-export const getRouter = () => {
-  const queryClient = new QueryClient();
+const rootRoute = createRootRoute();
 
-  const router = createRouter({
-    routeTree,
-    context: { queryClient },
-    scrollRestoration: true,
-    defaultPreloadStaleTime: 0,
-  });
+const indexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/",
+  component: Index,
+});
 
-  return router;
-};
+const agendamentoRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/agendamento",
+  component: AgendamentoPage,
+});
+
+const routeTree = rootRoute.addChildren([indexRoute, agendamentoRoute]);
+
+export const router = createRouter({
+  routeTree,
+  basepath: "/salaodopingo",
+});
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}

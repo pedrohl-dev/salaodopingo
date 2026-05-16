@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter, createRootRoute, createRoute } from "@tanstack/react-router";
 import Index from "./routes/index";
 import Agendamento from "./routes/agendamento";
+import "./styles.css";
 
 const rootRoute = createRootRoute();
 

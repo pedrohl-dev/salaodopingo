@@ -499,3 +499,5 @@ function AgendamentoPage() {
     </div>
   );
 }
+
+export default AgendamentoPage;

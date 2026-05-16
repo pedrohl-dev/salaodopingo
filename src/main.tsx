@@ -1,16 +1,26 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {
-  RouterProvider,
-  createRouter,
-  createHashHistory,
-} from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
+import { RouterProvider, createRouter, createRootRoute, createRoute } from "@tanstack/react-router";
+import Index from "./routes/index";
+import Agendamento from "./routes/agendamento";
 
-const router = createRouter({
-  routeTree,
-  history: createHashHistory(),
+const rootRoute = createRootRoute();
+
+const indexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/",
+  component: Index,
 });
+
+const agendamentoRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/agendamento",
+  component: Agendamento,
+});
+
+const routeTree = rootRoute.addChildren([indexRoute, agendamentoRoute]);
+
+const router = createRouter({ routeTree });
 
 declare module "@tanstack/react-router" {
   interface Register {

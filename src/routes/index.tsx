@@ -7,6 +7,9 @@ import ferramentasImg from "../assets/ferramentas.jpg";
 import salaoDoPingoImg from "../assets/salaodopingo.png";
 import salaoDoPingoBejeImg from "../assets/salaodopingobeje.jpg";
 import { Scissors, Clock, MapPin, Phone, Menu, X, ChevronRight, Star, Instagram} from "lucide-react";
+import CountUp from "react-countup";
+import { useInView } from "react-intersection-observer";
+
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -35,7 +38,13 @@ function Index() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.3,
+  });
+
   return (
+    
     <div className="min-h-screen bg-background text-foreground">
       {/* Header / Nav */}
       <header
@@ -45,6 +54,7 @@ function Index() {
             : "bg-transparent"
         }`}
       >
+
         <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
           <Link to="/" className="text-2xl font-bold tracking-wide" style={{ fontFamily: "'Playfair Display', serif" }}>
             <img style={{width: '80px', height: '80px',}} src={salaoDoPingoImg} alt="Salão do Pingo" className="h-10 w-auto" />
@@ -85,6 +95,7 @@ function Index() {
             </Link>
           </div>
         )}
+        
       </header>
 
       {/* Hero */}
@@ -183,12 +194,16 @@ function Index() {
               </p>
               <div className="mt-8 flex items-center gap-6">
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-primary">15+</p>
+                  <div ref={ref} className="text-3xl font-bold text-primary">
+                    {inView && <CountUp start={0} end={15} duration={2} />}
+                  </div>
                   <p className="text-sm text-muted-foreground">anos de experiência</p>
                 </div>
                 <div className="h-10 w-px bg-border" />
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-primary">5000+</p>
+                  <div ref={ref} className="text-3xl font-bold text-primary">
+                    {inView && <CountUp start={0} end={5000} duration={2} />}
+                  </div>
                   <p className="text-sm text-muted-foreground">clientes atendidos</p>
                 </div>
               </div>
@@ -318,5 +333,3 @@ function Index() {
     </div>
   );
 }
-
-export default Index;

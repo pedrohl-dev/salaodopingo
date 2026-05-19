@@ -10,7 +10,9 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  export default defineConfig({
   base: "/salaodopingo/",
+});
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

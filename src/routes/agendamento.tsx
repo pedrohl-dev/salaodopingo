@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Clock, Calendar, User, Phone, Scissors, Check } from "lucide-react";
+
+import { ArrowLeft, ChevronLeft, ChevronRight, Clock, Calendar, User, Phone, Scissors, Check, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/agendamento")({
   component: AgendamentoPage,
@@ -13,7 +14,18 @@ export const Route = createFileRoute("/agendamento")({
   }),
 });
 
-const WHATSAPP_NUMERO = "5511911223424";
+export default function AgendamentoPage() {
+  const [endereco, setEndereco] = useState(
+    "Rua Osvaldo de Lorenzi, 372 - Jardim Nova Jordanésia, Cajamar - SP"
+  );
+
+const WHATSAPP_JORDANESIA = "5511972968723";
+const WHATSAPP_POLVILHO = "5511974475555";
+
+const LOCAL_SALAO = [
+  "Salão do Pingo, Jordanésia",
+  "Salão do Pingo, Polvilho"
+];
 
 const DIAS_SEMANA = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const MESES = [
@@ -26,21 +38,6 @@ const HORARIOS = [
   "12:00", "13:00", "13:30", "14:00",
   "14:30", "15:00","15:30", "16:00",
   "16:30", "17:00", "17:30", "18:00", "18:30"
-];
-
-const SERVICOS = [
-  { nome: "Corte Clássico", preco: "R$ 45" },
-  { nome: "Corte Pingo", preco: "R$ 50" },
-  { nome: "Corte V", preco: "R$ 35" },
-  { nome: "Combo Corte + Barba", preco: "R$ 65" },
-  { nome: "Barba", preco: "R$ 45" },
-  { nome: "Barba Terapia", preco: "R$ 50" },
-  { nome: "Barba V", preco: "R$ 35" },
-  { nome: "Depilação Nasal", preco: "R$ 10" },
-  { nome: "Hidratação", preco: "R$ 20" },
-  { nome: "Penteado", preco: "R$ 15" },
-  { nome: "Progressiva", preco: "R$ 100" },
-  { nome: "Sobrancelha", preco: "R$ 15" },
 ];
 
 function isSameDay(d1: Date, d2: Date) {
@@ -82,13 +79,43 @@ function maskPhone(value: string) {
     });
 }
 
-function AgendamentoPage() {
+
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [servico, setServico] = useState("");
+  const [localSalao, setLocalSalao] = useState("");
+  const [localSelecionado, setLocalSelecionado] = useState(
+  "Salão do Pingo, Jordanésia"
+);
+  const [popupAberto, setPopupAberto] = useState(true);
+
+  const servicosDisponiveis =
+  (localSalao || localSelecionado) === "Salão do Pingo, Jordanésia"
+    ? [
+        { nome: "Corte Clássico", preco: "R$ 45" },
+        { nome: "Corte Pingo", preco: "R$ 50" },
+        { nome: "Corte V", preco: "R$ 35" },
+        { nome: "Barba", preco: "R$ 45" },
+        { nome: "Barba Terapia", preco: "R$ 50" },
+        { nome: "Barba V", preco: "R$ 35" },
+        { nome: "Bigode", preco: "R$ 15" },
+        { nome: "Depilação Nasal", preco: "R$ 15" },
+        { nome: "Hidratação", preco: "R$ 20" },
+        { nome: "Penteado", preco: "R$ 15" },
+        { nome: "Pezinho", preco: "R$ 15" },
+        { nome: "Progressiva", preco: "R$ 100" },
+        { nome: "Sombrancelha", preco: "R$ 45" },
+      ]
+    : [
+        { nome: "Corte", preco: "R$ 50" },
+        { nome: "Barba Terapia", preco: "R$ 50" },
+        { nome: "Hidratação", preco: "R$ 20" },
+        { nome: "Sobrancelha", preco: "R$ 15" },
+      ];
+
   const [enviado, setEnviado] = useState(false);
 
   const today = useMemo(() => {
@@ -211,10 +238,15 @@ function AgendamentoPage() {
       return;
     }
 
+    const whatsappNumero =
+  localSalao === "Salão do Pingo, Jordanésia"
+    ? WHATSAPP_JORDANESIA
+    : WHATSAPP_POLVILHO;
+
     const dataStr = formatarData(selectedDate);
     const msg = `Olá! Gostaria de agendar um horário no Salão do Pingo.\n\nNome: ${nome.trim()}\nServiço: ${servico}\nData: ${dataStr}\nHorário: ${selectedTime}\n\nAguardo confirmação, obrigado!`;
 
-    const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(msg)}`;
+    const url = `https://wa.me/${whatsappNumero}?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank");
     setEnviado(true);
   };
@@ -246,6 +278,83 @@ function AgendamentoPage() {
           </h1>
         </div>
       </header>
+
+      {/* Pop-up Localização Salão */ }
+      {popupAberto && (
+  <div
+    style={{
+      position: 'fixed',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      backdropFilter: 'blur(4px)',
+      WebkitBackdropFilter: 'blur(4px)',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      zIndex: 998,
+    }}
+  ></div>
+)}   {/*Fundo do Pop-Up*/ }
+
+      {popupAberto && (
+  <div
+    style={{
+      position: 'absolute',
+      transform: 'translate(-50%, -50%)',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'space-around',
+      left: '50%',
+      top: '50%',
+      width: '300px',
+      height: '500px',
+      zIndex: 999,
+    }}
+    className="rounded-xl border border-border bg-card p-6"
+  >
+        <h2 className="text-lg font-semibold" >Selecione um Local</h2>
+           <select
+        value={localSelecionado}
+        onChange={(e) => {
+          const valor = e.target.value;
+
+          setLocalSelecionado(valor);
+          setServico("");
+
+          if (valor === "Salão do Pingo, Jordanésia") {
+            setEndereco(
+              "Rua Osvaldo de Lorenzi, 372 - Jardim Nova Jordanésia, Cajamar - SP"
+            );
+          } else {
+            setEndereco(
+              "Av. das Acucenas - Guaturinho, Cajamar - SP"
+            );
+          }
+        }}
+        className="w-full rounded-lg border border-border bg-background pl-11 pr-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all appearance-none cursor-pointer"
+      >
+  <option>Salão do Pingo, Jordanésia</option>
+  <option>Salão do Pingo, Polvilho</option>
+</select>
+
+<p className="text-sm text-muted-foreground text-center">
+  {endereco}
+</p>
+
+        <MapPin style={{
+          position: 'absolute',
+          left: '40px',
+          top: '36%',
+        }} className="w-4 h-4 text-primary" />
+                <button
+                  onClick={() => {
+                    setLocalSalao(localSelecionado);
+                    setPopupAberto(false);
+                  }}
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20"
+            ><Check className="w-4 h-4" /> Confirmar</button>
+      </div> )} {/* Pop-up */}
 
       <main className="mx-auto max-w-4xl px-4 py-10">
         {enviado ? (
@@ -436,7 +545,7 @@ function AgendamentoPage() {
                         style={{ backgroundImage: "none" }}
                       >
                         <option value="">Selecione um serviço</option>
-                        {SERVICOS.map((s) => (
+                        {servicosDisponiveis.map((s) => (
                           <option key={s.nome} value={s.nome}>
                             {s.nome} — {s.preco}
                           </option>
@@ -499,5 +608,3 @@ function AgendamentoPage() {
     </div>
   );
 }
-
-export default AgendamentoPage;

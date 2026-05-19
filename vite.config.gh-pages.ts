@@ -5,19 +5,20 @@ import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 
 export default defineConfig({
+  base: "/salaodopingo/",
+
   plugins: [
     TanStackRouterVite(),
     react(),
     tailwindcss(),
   ],
-  export default defineConfig({
-  base: "/salaodopingo/",
-});
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+
   build: {
     outDir: "dist",
   },

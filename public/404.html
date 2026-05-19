@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <script>
-      const path = window.location.pathname;
+      const path = window.location.pathname.replace("/salaodopingo", "");
       window.location.replace(
-        window.location.origin + "/?redirect=" + encodeURIComponent(path)
+        window.location.origin + "/salaodopingo/?redirect=" + encodeURIComponent(path)
       );
     </script>
   </head>

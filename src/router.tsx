@@ -1,11 +1,15 @@
-import { createRouter, createRootRoute, createRoute } from "@tanstack/react-router";
-import { Route as rootRoute } from "./routes/__root";
-import { Route as indexRoute } from "./routes/index";
-import { Route as agendamentoRoute } from "./routes/agendamento";
+import { createRouter } from "@tanstack/react-router";
+import { QueryClient } from "@tanstack/react-query";
+import { routeTree } from "./routeTree.gen";
 
-const routeTree = rootRoute.addChildren([indexRoute, agendamentoRoute]);
+export const queryClient = new QueryClient();
 
-export const router = createRouter({ routeTree });
+export const router = createRouter({
+  routeTree,
+  context: {
+    queryClient,
+  },
+});
 
 declare module "@tanstack/react-router" {
   interface Register {
